@@ -8,7 +8,7 @@
                 <b-navbar-brand href="#">BujoTetris</b-navbar-brand>
             </b-navbar>
 
-            <canvas id="canvas" :width=canvasWidth :height=canvasHeight v-draw="msg"></canvas>
+            <canvas id="canvas" :width=canvasWidth :height=canvasHeight :style="{width: canvasWidth/2, height: canvasHeight/2}" v-draw="msg"></canvas>
 
             <div class="container">
 
@@ -358,6 +358,7 @@ export default {
                     }
                 }
             }
+            ctx.scale(2,2)
         }
     }
 }
