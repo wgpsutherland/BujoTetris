@@ -1,8 +1,101 @@
 <template>
+
     <div class="hello">
-    <div id="app">
-        <canvas id="canvas" :width=canvasWidth :height=canvasHeight v-draw="msg"></canvas>
-    </div>
+
+        <div id="app">
+
+            <b-navbar variant="info" type="dark">
+                <b-navbar-brand href="#">BujoTetris</b-navbar-brand>
+            </b-navbar>
+
+            <canvas id="canvas" :width=canvasWidth :height=canvasHeight v-draw="msg"></canvas>
+
+            <div class="container">
+
+                <div class="row">
+
+                    <div class="col-12">
+
+                        <b-form>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b-form-group id="dotsInputGroup" label="Horizontal dots in journal:" label-for="dotsInput">
+                                        <b-form-select id="dotsInput" v-model.number="dotsHorizontal" class="mb-3">
+                                            <option v-for="n in 35" :value="n" :style="{ display: n >= 25 ? 'list-style' : 'none' }">
+                                                {{n}}
+                                            </option>
+                                        </b-form-select>
+                                    </b-form-group>  
+                                </div>
+                                <div class="col-md-6">
+                                    <b-form-group label="Orientation:" label-for="orientationInput">
+                                        <b-form-radio-group v-model="top"
+                                                            id="orientationInput"
+                                                            :options="[{ text: 'Top', value: true }, { text: 'Bottom', value: false }]"
+                                                            name="radiosMd">
+                                        </b-form-radio-group>
+                                    </b-form-group>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b-form-group id="monthInputGroup" :label="'Month: ' + numDays + ' days'" label-for="monthInput">
+                                        <b-form-select id="monthInput" v-model.number="month" class="mb-3">
+                                            <option v-for="n in 12" :value="n">{{n}}</option>
+                                        </b-form-select>
+                                    </b-form-group>  
+                                </div>
+
+                                <div class="col-md-6">
+                                    <b-form-group id="yearInputGroup" label="Year:" label-for="yearInput">
+                                        <b-form-select id="yearInput" v-model.number="year" class="mb-3">
+                                            <option v-for="n in 4">{{year + n - 2}}</option>
+                                        </b-form-select>
+                                    </b-form-group>  
+                                </div>
+                            </div>
+                            
+
+                                    
+
+                            
+
+                                    
+
+                        </b-form>                        
+
+                    </div>
+
+                        
+                </div>
+            </div>
+
+            
+
+                  
+
+            
+
+            <!-- <select v-model.number="dotsHorizontal">
+                <option v-for="n in 35" :value="n" :style="{ display: n >= 25 ? 'list-style' : 'none' }">{{n}} horizontal dots</option>
+            </select> -->
+
+            <!-- <select v-model.number="month">
+                <option v-for="n in 12" :value="n">{{n}}</option>
+            </select> -->
+
+            <!-- <select v-model.number="year">
+                <template v-for="n in 4">
+                    <option>{{year + n - 2}}</option>
+                </template>
+            </select> -->
+            
+            <!-- <label for="checkbox">Top?</label>
+            <input type="checkbox" id="checkbox" v-model="top"> -->
+
+        </div>
     </div>
 </template>
 
@@ -13,18 +106,22 @@ import shapes from "../mixins/shapes"
 export default {
 
     data () {
+
+        var today = new Date()
+
         return {
             msg: 'hello',
-            canvasWidth: 450,
-            canvasHeight: 600,
-            dotsVertical: 40,
+            dotsVertical: 8,
             dotsHorizontal: 28,
+            // squareSize: 20,
             startingPoint: {
                 x: 0,
                 y: 0
             },
-            top: true,
-            colours: [0]
+            top: false,
+            colours: [0],
+            year: today.getFullYear(),
+            month: today.getMonth() + 1
         }
     },
 
@@ -33,10 +130,24 @@ export default {
             return this.dotsHorizontal - 1
         },
         gridHeight() {
-            return 15
+            return 8
         },
         grid() {
             return this.initGrid(this.gridHeight, this.gridWidth)
+        },
+        squareSize() {
+            return this.canvasWidth / (this.dotsHorizontal + 1)
+        },
+        canvasWidth() {
+            return document.documentElement.clientWidth
+            // return this.squareSize * (this.dotsHorizontal + 1)
+        },
+        canvasHeight() {
+            return this.squareSize * (this.dotsVertical + 1)
+        },
+        numDays() {
+            var d = new Date(this.year, this.month, 0);
+            return d.getDate()
         }
     },
 
@@ -110,7 +221,9 @@ export default {
 
             var grid = this.emptyGrid(height, width);
 
-            for (let i = 1; i <= 31; i++) {
+            for (let i = 1; i <= this.numDays; i++) {
+
+                this.startingPoint = this.findStartingPoint(grid)
 
                 this.colours[i] = this.getRandomColor()
 
@@ -144,8 +257,6 @@ export default {
 
                     this.startingPoint = copyStartingPoint;
                 }
-
-                this.startingPoint = this.findStartingPoint(grid)
             }
 
             return grid
@@ -223,25 +334,23 @@ export default {
     directives: {
 
         draw(canvasElement, binding, vnode) {
-
+            
             var data = vnode.context
-            var gapHor = Math.floor(data.canvasWidth / (data.dotsHorizontal + 1));
-            var gapVer = Math.floor(data.canvasHeight / (data.dotsVertical + 1));
 
             var ctx = canvasElement.getContext("2d");  // get canvas context
             ctx.clearRect(0, 0, data.canvasWidth, data.canvasHeight);  // clear the canvas
 
             ctx.fillStyle = "grey";
 
-            for (let i = 1; i <= data.dotsHorizontal; i++) {
+            for (let i = 0; i < data.dotsHorizontal; i++) {
 
                 ctx.beginPath();
 
-                var x = Math.floor(i * gapHor)
+                var x = (i + 1) * data.squareSize
 
-                for (let j = 1; j <= data.dotsVertical; j++) {
+                for (let j = 0; j < data.dotsVertical; j++) {
 
-                    var y = Math.floor(j * gapVer)
+                    var y = (j + 1) * data.squareSize
 
                     ctx.arc(x, y, 0.5, 0, Math.PI * 2, true);
                 }
@@ -250,21 +359,30 @@ export default {
             }
 
             ctx.strokeStyle="black";
+            ctx.textBaseline = "top"
+
+            var drawnNumbers = new Set()
 
             for (let i = 0; i < data.grid.length; i++) {
 
+                var y = data.top ? (i + 1) * data.squareSize : data.canvasHeight - ((i + 2) * data.squareSize)
+
                 for (let j = 0; j < data.grid[i].length; j++) {
 
-                    var gap = i * gapVer;
-                    var y = Math.floor(data.top ? gapVer + gap : data.canvasHeight - (2 * gapVer) - gap)
-                    
-                    var x = Math.floor(gapHor + (j * gapHor))
+                    var x = (j + 1) * data.squareSize
+                    var el = data.grid[i][j]
 
                     if(data.grid[i][j] != 0) {
-                        ctx.fillStyle = data.colours[data.grid[i][j]]
+                        ctx.fillStyle = data.colours[el]
                         ctx.beginPath();
-                        ctx.rect(x, y, gapHor, gapVer);
+                        ctx.rect(x, y, data.squareSize, data.squareSize);
                         ctx.fill();
+
+                        if(!drawnNumbers.has(el)) {
+                            ctx.font= (data.squareSize * 3 / 5) + "px Georgia";
+                            ctx.fillText(el, x + 4, y);
+                            drawnNumbers.add(el)
+                        }
                     }
                 }
             }
