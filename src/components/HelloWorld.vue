@@ -43,7 +43,7 @@
                                 <div class="col-md-6">
                                     <b-form-group id="monthInputGroup" :label="'Month: ' + numDays + ' days'" label-for="monthInput">
                                         <b-form-select id="monthInput" v-model.number="month" class="mb-3">
-                                            <option v-for="n in 12" :value="n">{{n}}</option>
+                                            <option v-for="n in 12" :value="n">{{monthNames[n - 1]}}</option>
                                         </b-form-select>
                                     </b-form-group>  
                                 </div>
@@ -57,44 +57,12 @@
                                 </div>
                             </div>
                             
-
-                                    
-
-                            
-
-                                    
-
                         </b-form>                        
 
                     </div>
 
-                        
                 </div>
             </div>
-
-            
-
-                  
-
-            
-
-            <!-- <select v-model.number="dotsHorizontal">
-                <option v-for="n in 35" :value="n" :style="{ display: n >= 25 ? 'list-style' : 'none' }">{{n}} horizontal dots</option>
-            </select> -->
-
-            <!-- <select v-model.number="month">
-                <option v-for="n in 12" :value="n">{{n}}</option>
-            </select> -->
-
-            <!-- <select v-model.number="year">
-                <template v-for="n in 4">
-                    <option>{{year + n - 2}}</option>
-                </template>
-            </select> -->
-            
-            <!-- <label for="checkbox">Top?</label>
-            <input type="checkbox" id="checkbox" v-model="top"> -->
-
         </div>
     </div>
 </template>
@@ -121,7 +89,11 @@ export default {
             top: false,
             colours: [0],
             year: today.getFullYear(),
-            month: today.getMonth() + 1
+            month: today.getMonth() + 1,
+            monthNames: [
+                "January", "February", "March", "April", "May", "June","July", 
+                "August", "September", "October", "November", "December"
+            ]
         }
     },
 
