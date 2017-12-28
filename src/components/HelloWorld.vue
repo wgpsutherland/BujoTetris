@@ -22,8 +22,8 @@
                                 <div class="col-md-6">
                                     <b-form-group id="dotsInputGroup" label="Horizontal dots in journal:" label-for="dotsInput">
                                         <b-form-select id="dotsInput" v-model.number="dotsHorizontal" class="mb-3">
-                                            <option v-for="n in 35" :value="n" :style="{ display: n >= 25 ? 'list-style' : 'none' }">
-                                                {{n}}
+                                            <option v-for="n in 11">
+                                                {{24 + n}}
                                             </option>
                                         </b-form-select>
                                     </b-form-group>  
