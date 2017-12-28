@@ -80,7 +80,7 @@ export default {
         return {
             msg: 'hello',
             dotsVertical: 8,
-            dotsHorizontal: 28,
+            dotsHorizontal: 29,
             // squareSize: 20,
             startingPoint: {
                 x: 0,
