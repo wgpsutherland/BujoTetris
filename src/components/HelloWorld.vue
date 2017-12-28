@@ -111,7 +111,7 @@ export default {
             return this.canvasWidth / (this.dotsHorizontal + 1)
         },
         canvasWidth() {
-            return document.documentElement.clientWidth
+            return 3 * (document.documentElement.clientWidth)  // makes it render nicely without blurring
             // return this.squareSize * (this.dotsHorizontal + 1)
         },
         canvasHeight() {
@@ -382,7 +382,8 @@ a {
 }
 
 #canvas {
-    background-color: ivory
+    background-color: ivory;
+    width: 100%;
 }
 
 </style>
